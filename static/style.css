@@ -614,6 +614,11 @@ button[type="submit"],
     box-shadow: 0 4px 14px 0 rgba(0, 102, 179, 0.3);
 }
 
+.btn-sm {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.85rem;
+}
+
 button[type="submit"]:hover,
 .btn-primary:hover,
 .btn-strong:hover {

@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<section class="hero-crud">
-    <span class="hero-tag">Modulo CRUD</span>
-    <h1>Gestion de Pasajeros</h1>
-    <p>Registra, edita y elimina pasajeros conectados directamente a Oracle.</p>
+<section class="section-hero hero-crud">
+    <div class="container">
+        <h1>Gestion de Pasajeros</h1>
+        <p>Registra, edita y elimina pasajeros conectados directamente a Oracle.</p>
+    </div>
 </section>
 
 {% with messages = get_flashed_messages() %}
@@ -44,7 +45,7 @@
                 <option value="CI Extranjero">CI Extranjero</option>
             </select>
         </label>
-        <button type="submit" class="btn-strong">Guardar Pasajero</button>
+        <button type="submit" class="btn-strong btn-sm">Guardar Pasajero</button>
     </form>
 </section>
 
