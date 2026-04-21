@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}CU03 - Controlar Acceso y Cobro - Mi Teleferico{% endblock %}
+
+{% block content %}
+<section class="section-hero">
+    <div class="container">
+        <span class="hero-tag">CU03</span>
+        <h1>Controlar Acceso y Cobro</h1>
+        <p>Simulacion de molinete para registrar acceso con cobro automatico.</p>
+    </div>
+</section>
+
+{% include '_resultado_embebido.html' %}
+
+<div class="content-wrapper">
+    <div class="container">
+        <section class="panel" style="max-width: 700px;">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; vertical-align: middle; margin-right: 8px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                Procedimiento: sp_registrar_acceso(idtarjeta, idmolinete)
+            </h2>
+            <p>Valida tarjeta/molinete, aplica funciones de transbordo y tarifa, y activa trigger de descuento de saldo.</p>
+            
+            <div style="background: linear-gradient(135deg, #FEF3C7 0%, #FFFBEB 100%); border: 1px solid #FCD34D; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                <p style="margin: 0; display: flex; align-items: center; gap: 0.5rem; color: #92400E; font-size: 0.875rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    <strong>Importante:</strong> Esta operacion descontara saldo de la tarjeta segun la tarifa vigente.
+                </p>
+            </div>
+            
+            <form action="{{ url_for('cu03_registrar_acceso') }}" method="POST" class="form-grid">
+                <label>
+                    ID Tarjeta
+                    <input type="number" name="idtarjeta" min="1" placeholder="Ej: 1001" required>
+                </label>
+                <label>
+                    ID Molinete
+                    <input type="number" name="idmolinete" min="1" placeholder="Ej: 1" required>
+                </label>
+                <div style="grid-column: 1 / -1; margin-top: 8px;">
+                    <button type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                        Registrar Acceso
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section class="panel" style="max-width: 700px; background: linear-gradient(135deg, #F8FAFC 0%, #F0FDF4 100%); border: 1px solid #BBF7D0;">
+            <h3 style="color: #166534; margin-bottom: 1rem; font-family: 'Montserrat', sans-serif;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; vertical-align: middle; margin-right: 8px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                Logica de Transbordo
+            </h3>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                <li style="padding: 0.5rem 0; display: flex; align-items: flex-start; gap: 0.5rem; color: #475569;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Si el ultimo viaje fue hace menos de 60 minutos, se aplica tarifa de transbordo
+                </li>
+                <li style="padding: 0.5rem 0; display: flex; align-items: flex-start; gap: 0.5rem; color: #475569;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    El descuento por categoria se aplica automaticamente
+                </li>
+                <li style="padding: 0.5rem 0; display: flex; align-items: flex-start; gap: 0.5rem; color: #475569;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    El sistema verifica saldo suficiente antes del acceso
+                </li>
+            </ul>
+        </section>
+    </div>
+</div>
+{% endblock %}

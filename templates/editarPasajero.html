@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Pasajero - Mi Teleferico{% endblock %}
+
+{% block content %}
+<section class="section-hero">
+    <div class="container">
+        <span class="hero-tag">Modulo CRUD</span>
+        <h1>Editar Pasajero</h1>
+        <p>Actualizando informacion del pasajero: <strong>{{ p[0] }}</strong></p>
+    </div>
+</section>
+
+<div class="content-wrapper">
+    <div class="container">
+        <section class="panel" style="max-width: 600px; margin: 0 auto;">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; vertical-align: middle; margin-right: 8px;"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                Datos del Pasajero
+            </h2>
+            
+            <form action="/editarPasajero/{{ p[0] }}" method="POST" style="display: flex; flex-direction: column; gap: 1rem;">
+                <label style="display: flex; flex-direction: column; gap: 0.25rem; font-weight: 500; color: #334155;">
+                    Nombre
+                    <input type="text" name="nombre" value="{{ p[1] }}" required style="padding: 0.5rem 1rem; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 1rem;">
+                </label>
+                
+                <label style="display: flex; flex-direction: column; gap: 0.25rem; font-weight: 500; color: #334155;">
+                    Apellido Paterno
+                    <input type="text" name="paterno" value="{{ p[2] }}" required style="padding: 0.5rem 1rem; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 1rem;">
+                </label>
+                
+                <label style="display: flex; flex-direction: column; gap: 0.25rem; font-weight: 500; color: #334155;">
+                    Apellido Materno
+                    <input type="text" name="materno" value="{{ p[3] }}" style="padding: 0.5rem 1rem; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 1rem;">
+                </label>
+                
+                <label style="display: flex; flex-direction: column; gap: 0.25rem; font-weight: 500; color: #334155;">
+                    Fecha de Nacimiento
+                    <input type="date" name="fechanac" value="{{ p[4] }}" required style="padding: 0.5rem 1rem; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 1rem;">
+                </label>
+                
+                <label style="display: flex; flex-direction: column; gap: 0.25rem; font-weight: 500; color: #334155;">
+                    Tipo Documento
+                    <select name="tipo_doc" style="padding: 0.5rem 1rem; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 1rem;">
+                        <option value="CI Boliviano" {% if p[5] == 'CI Boliviano' or p[5] == 'CI' %}selected{% endif %}>CI Boliviano</option>
+                        <option value="Pasaporte" {% if p[5] == 'Pasaporte' %}selected{% endif %}>Pasaporte</option>
+                        <option value="CI Extranjero" {% if p[5] == 'CI Extranjero' %}selected{% endif %}>CI Extranjero</option>
+                    </select>
+                </label>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button type="submit" class="btn-strong">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                        Actualizar Datos
+                    </button>
+                    <a href="{{ url_for('listaPasajeros') }}" class="btn-cancelar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; vertical-align: middle; margin-right: 4px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+{% endblock %}

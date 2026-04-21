@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}CU01 - Emitir Credenciales - Mi Teleferico{% endblock %}
+
+{% block content %}
+<section class="section-hero">
+    <div class="container">
+        <span class="hero-tag">CU01</span>
+        <h1>Emitir Credenciales</h1>
+        <p>Panel para invocar procedimientos de emision y validar triggers de TARJETA.</p>
+    </div>
+</section>
+
+{% include '_resultado_embebido.html' %}
+
+<div class="content-wrapper">
+    <div class="container">
+        <section class="panel">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; vertical-align: middle; margin-right: 8px;"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                Procedimiento: sp_emitir_tarjeta(ci, idcategoria, saldo)
+            </h2>
+            <p>Emite una tarjeta nueva validando pasajero y categoria. Activa triggers de auditoria y bloqueo dominical.</p>
+            <form action="{{ url_for('cu01_emitir_tarjeta') }}" method="POST" class="form-grid">
+                <label>
+                    CI del Pasajero
+                    <input type="text" name="ci" placeholder="Ej: 12345678" required>
+                </label>
+                <label>
+                    ID Categoria
+                    <input type="number" name="idcategoria" min="1" placeholder="Ej: 1" required>
+                </label>
+                <label>
+                    Saldo Inicial (Bs)
+                    <input type="number" step="0.01" name="saldo" min="0" placeholder="Ej: 50.00" required>
+                </label>
+                <div style="grid-column: 1 / -1;">
+                    <button type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                        Emitir Tarjeta
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section class="panel">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; vertical-align: middle; margin-right: 8px;"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path><path d="M13 5v2"></path><path d="M13 17v2"></path><path d="M13 11v2"></path></svg>
+                Procedimiento: sp_emitir_ticket(idtipo, idestacion)
+            </h2>
+            <p>Emite ticket validando tipo y estacion. Si tu procedimiento requiere un tercer parametro, se envia como opcional.</p>
+            <form action="{{ url_for('cu01_emitir_ticket') }}" method="POST" class="form-grid">
+                <label>
+                    ID Tipo Ticket
+                    <input type="number" name="idtipo" min="1" placeholder="Ej: 1" required>
+                </label>
+                <label>
+                    ID Estacion
+                    <input type="number" name="idestacion" min="1" placeholder="Ej: 1" required>
+                </label>
+                <label>
+                    ID Viaje (opcional)
+                    <input type="number" name="idviaje" min="1" placeholder="Opcional">
+                </label>
+                <div style="grid-column: 1 / -1;">
+                    <button type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path></svg>
+                        Emitir Ticket
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section class="panel">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; vertical-align: middle; margin-right: 8px;"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg>
+                Trigger: trg_auditoria_cambios
+            </h2>
+            <p>Consulta los ultimos registros de AUDITORIA generados por operaciones en TARJETA.</p>
+            <form action="{{ url_for('cu01_ver_auditoria') }}" method="POST">
+                <button type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    Ver Auditoria
+                </button>
+            </form>
+        </section>
+    </div>
+</div>
+{% endblock %}

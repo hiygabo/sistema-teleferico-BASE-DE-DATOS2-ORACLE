@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}CU05 - Reportes y Metricas - Mi Teleferico{% endblock %}
+
+{% block content %}
+<section class="section-hero">
+    <div class="container">
+        <span class="hero-tag">CU05</span>
+        <h1>Reportes y Metricas</h1>
+        <p>Consultas de vistas y procedimiento de lineas/molinetes. Incluye prueba de trigger de restriccion.</p>
+    </div>
+</section>
+
+{% include '_resultado_embebido.html' %}
+
+<div class="content-wrapper">
+    <div class="container">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+            
+            <section class="panel" style="border-top: 4px solid #10B981;">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; vertical-align: middle; margin-right: 8px;"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    Recaudacion por Linea
+                </h2>
+                <p style="font-size: 0.875rem; color: #64748B;">Vista: VW_RECAUDACION_POR_LINEA</p>
+                <p>Genera reporte consolidado de recaudacion por cada linea del sistema.</p>
+                <form action="{{ url_for('cu05_recaudacion') }}" method="POST">
+                    <button type="submit" style="width: 100%;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>
+                        Generar Recaudacion
+                    </button>
+                </form>
+            </section>
+
+            <section class="panel" style="border-top: 4px solid #3B82F6;">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; vertical-align: middle; margin-right: 8px;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    Pasajeros por Franja
+                </h2>
+                <p style="font-size: 0.875rem; color: #64748B;">Vista: VW_PASAJEROS_POR_FRANJA</p>
+                <p>Analiza distribucion de pasajeros por franja horaria.</p>
+                <form action="{{ url_for('cu05_franja') }}" method="POST">
+                    <button type="submit" style="width: 100%;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        Generar por Franja
+                    </button>
+                </form>
+            </section>
+
+            <section class="panel" style="border-top: 4px solid #8B5CF6;">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; vertical-align: middle; margin-right: 8px;"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                    Estado de Molinetes
+                </h2>
+                <p style="font-size: 0.875rem; color: #64748B;">Procedimiento: sp_mostrar_lineas_molinetes()</p>
+                <p>Muestra estado actual de todos los molinetes por linea.</p>
+                <form action="{{ url_for('cu05_lineas_molinetes') }}" method="POST">
+                    <button type="submit" style="width: 100%;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                        Generar Estado
+                    </button>
+                </form>
+            </section>
+
+        </div>
+
+        <section class="panel" style="margin-top: 1.5rem; border-left: 4px solid #EF4444; background: linear-gradient(135deg, #FEF2F2 0%, #FFFFFF 100%);">
+            <h2 style="color: #DC2626;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; vertical-align: middle; margin-right: 8px;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                Trigger: trg_restriccion_molinetes
+            </h2>
+            <p>Prueba de bloqueo al intentar eliminar un molinete activo. Esta operacion deberia ser rechazada por el trigger.</p>
+            
+            <div style="background: #FEE2E2; border: 1px solid #FECACA; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                <p style="margin: 0; display: flex; align-items: center; gap: 0.5rem; color: #991B1B; font-size: 0.875rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                    <strong>Advertencia:</strong> Esta es una prueba de restriccion. El sistema deberia impedir la eliminacion.
+                </p>
+            </div>
+            
+            <form action="{{ url_for('cu05_restriccion_molinete') }}" method="POST" class="form-grid" style="max-width: 400px;">
+                <label>
+                    ID Molinete
+                    <input type="number" name="idmolinete" min="1" placeholder="Ej: 1" required>
+                </label>
+                <div style="grid-column: 1 / -1;">
+                    <button type="submit" style="background: linear-gradient(135deg, #EF4444, #DC2626);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path></svg>
+                        Probar Restriccion
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+{% endblock %}

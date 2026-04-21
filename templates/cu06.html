@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}CU06 - Administrar Usuarios y Roles - Mi Teleferico{% endblock %}
+
+{% block content %}
+<section class="section-hero">
+    <div class="container">
+        <span class="hero-tag">CU06</span>
+        <h1>Administrar Usuarios y Roles</h1>
+        <p>Consulta de solo lectura a usuarios y roles del diccionario de Oracle.</p>
+    </div>
+</section>
+
+{% include '_resultado_embebido.html' %}
+
+<div class="content-wrapper">
+    <div class="container">
+        <section class="panel" style="max-width: 700px;">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; vertical-align: middle; margin-right: 8px;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Consultas: DBA_USERS y DBA_ROLE_PRIVS
+            </h2>
+            <p>Muestra usuarios activos y sus roles asignados en la base de datos Oracle.</p>
+            
+            <div style="background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); border: 1px solid #93C5FD; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                <p style="margin: 0; display: flex; align-items: flex-start; gap: 0.5rem; color: #1E40AF; font-size: 0.875rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    <span><strong>Nota:</strong> Esta consulta accede al diccionario de datos de Oracle (DBA_USERS, DBA_ROLE_PRIVS). Requiere privilegios de DBA o SELECT sobre estas vistas.</span>
+                </p>
+            </div>
+            
+            <form action="{{ url_for('cu06_usuarios_roles') }}" method="POST">
+                <button type="submit" style="width: 100%;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    Listar Usuarios y Roles
+                </button>
+            </form>
+        </section>
+
+        <section class="panel" style="max-width: 700px; background: linear-gradient(135deg, #F8FAFC 0%, #F0F9FF 100%); border: 1px solid #BAE6FD;">
+            <h3 style="color: #0369A1; margin-bottom: 1rem; font-family: 'Montserrat', sans-serif;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; vertical-align: middle; margin-right: 8px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                Informacion de Seguridad
+            </h3>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                <li style="padding: 0.5rem 0; display: flex; align-items: flex-start; gap: 0.5rem; color: #475569; border-bottom: 1px solid #E2E8F0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0066B3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                    <span><strong>DBA_USERS:</strong> Contiene informacion sobre todos los usuarios de la base de datos</span>
+                </li>
+                <li style="padding: 0.5rem 0; display: flex; align-items: flex-start; gap: 0.5rem; color: #475569; border-bottom: 1px solid #E2E8F0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0066B3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                    <span><strong>DBA_ROLE_PRIVS:</strong> Muestra los roles asignados a cada usuario</span>
+                </li>
+                <li style="padding: 0.5rem 0; display: flex; align-items: flex-start; gap: 0.5rem; color: #475569;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0066B3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                    <span><strong>Acceso:</strong> Solo lectura, no permite modificaciones</span>
+                </li>
+            </ul>
+        </section>
+    </div>
+</div>
+{% endblock %}

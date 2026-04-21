@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestion de Pasajeros - Mi Teleferico{% endblock %}
+
+{% block content %}
+<section class="section-hero hero-crud">
+    <div class="container">
+        <span class="hero-tag">Modulo CRUD</span>
+        <h1>Gestion de Pasajeros</h1>
+        <p>Registra, edita y elimina pasajeros conectados directamente a Oracle.</p>
+    </div>
+</section>
+
+<div class="content-wrapper">
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <section class="panel flash-panel">
+            <ul class="flash-list">
+                {% for message in messages %}
+                <li>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; vertical-align: middle; margin-right: 8px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    {{ message }}
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+        {% endwith %}
+
+        <section class="panel">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; vertical-align: middle; margin-right: 8px;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" x2="19" y1="8" y2="14"></line><line x1="22" x2="16" y1="11" y2="11"></line></svg>
+                Registrar Pasajero
+            </h2>
+            <form action="{{ url_for('agregarPasajero') }}" method="POST" class="form-grid">
+                <label>
+                    Carnet de Identidad
+                    <input type="text" name="ci" placeholder="Ej: 12345678" required>
+                </label>
+                <label>
+                    Nombre
+                    <input type="text" name="nombre" placeholder="Nombre completo" required>
+                </label>
+                <label>
+                    Apellido Paterno
+                    <input type="text" name="paterno" placeholder="Apellido paterno" required>
+                </label>
+                <label>
+                    Apellido Materno
+                    <input type="text" name="materno" placeholder="Apellido materno">
+                </label>
+                <label>
+                    Fecha de Nacimiento
+                    <input type="date" name="fechanac" required>
+                </label>
+                <label>
+                    Tipo de Documento
+                    <select name="tipo_doc">
+                        <option value="CI">CI Boliviano</option>
+                        <option value="Pasaporte">Pasaporte</option>
+                        <option value="CI Extranjero">CI Extranjero</option>
+                    </select>
+                </label>
+                <div style="grid-column: 1 / -1; margin-top: 8px;">
+                    <button type="submit" class="btn-strong">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                        Guardar Pasajero
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section class="panel">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; vertical-align: middle; margin-right: 8px;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Listado de Pasajeros
+            </h2>
+            <div class="table-shell">
+                <table class="crud-table">
+                    <thead>
+                        <tr>
+                            <th>Carnet</th>
+                            <th>Nombre</th>
+                            <th>Paterno</th>
+                            <th>Materno</th>
+                            <th>Fecha Nacimiento</th>
+                            <th>Tipo Documento</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in pasajeros %}
+                        <tr>
+                            <td><strong>{{ p[0] }}</strong></td>
+                            <td>{{ p[1] }}</td>
+                            <td>{{ p[2] }}</td>
+                            <td>{{ p[3] }}</td>
+                            <td>{{ p[4] }}</td>
+                            <td>{{ p[5] }}</td>
+                            <td class="actions-cell">
+                                <a class="btn-link" href="{{ url_for('editarPasajero', ci=p[0]) }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                                    Editar
+                                </a>
+                                <a class="btn-link danger" href="{{ url_for('eliminarPasajero', ci=p[0]) }}" onclick="return confirm('Esta seguro de eliminar este pasajero?')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                    Eliminar
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
