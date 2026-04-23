@@ -1,0 +1,1051 @@
+
+CREATE USER teleferico IDENTIFIED BY "Teleferico@2026";
+GRANT ALL PRIVILEGES TO teleferico;
+
+CREATE TABLE LINEA (
+    IDLINEA NUMBER PRIMARY KEY,
+    COLOR VARCHAR2(30) NOT NULL,
+    TARIFA_BASE NUMBER(5,2) NOT NULL
+);
+
+
+CREATE TABLE ESTACION (
+    IDESTACION NUMBER PRIMARY KEY,
+    NOMBRE VARCHAR2(100) NOT NULL,
+    IDLINEA NUMBER REFERENCES LINEA(IDLINEA)
+);
+
+
+CREATE TABLE MOLINETE (
+    IDMOLINETE NUMBER PRIMARY KEY,
+    IDESTACION NUMBER REFERENCES ESTACION(IDESTACION),
+    NUMERO_SERIE VARCHAR2(50) UNIQUE NOT NULL,
+    ESTADO_OPERATIVO VARCHAR2(20) DEFAULT 'ACTIVO'
+);
+
+
+CREATE TABLE PASAJERO (
+    CI VARCHAR2(15) PRIMARY KEY,
+    NOMBRE VARCHAR2(50) NOT NULL,
+    PATERNO VARCHAR2(50) NOT NULL,
+    MATERNO VARCHAR2(50),
+    FECHANAC DATE,
+    TIPO_DOCUMENTO_VALIDAR VARCHAR2(30)
+);
+
+
+CREATE TABLE CATEGORIA_TARJETA (
+    IDCATEGORIA NUMBER PRIMARY KEY,
+    NOMBRE_PERFIL VARCHAR2(50) NOT NULL, 
+    DESCUENTO_PORCENTAJE NUMBER(5,2) DEFAULT 0 
+);
+
+
+CREATE TABLE TARJETA (
+    IDTARJETA NUMBER PRIMARY KEY,
+    CI VARCHAR2(15) REFERENCES PASAJERO(CI),
+    IDCATEGORIA NUMBER REFERENCES CATEGORIA_TARJETA(IDCATEGORIA),
+    SALDO NUMBER(8,2) NOT NULL,
+    FECHA_EMISION DATE DEFAULT SYSDATE
+);
+
+
+CREATE TABLE RECARGA (
+    IDRECARGA NUMBER PRIMARY KEY,
+    IDTARJETA NUMBER REFERENCES TARJETA(IDTARJETA),
+    MONTO_ABONADO NUMBER(8,2) NOT NULL,
+    FECHA_HORA TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE VIAJE (
+    IDVIAJE NUMBER PRIMARY KEY,
+    IDTARJETA NUMBER REFERENCES TARJETA(IDTARJETA), -- Puede ser NULL si entra con Ticket
+    IDMOLINETE NUMBER REFERENCES MOLINETE(IDMOLINETE) NOT NULL,
+    MONTO_COBRADO NUMBER(5,2) NOT NULL,
+    ESTRANSBORDO CHAR(1) DEFAULT 'N',
+    FECHA_HORA_INGRESO TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE TIPOTICKET (
+    IDTIPO NUMBER PRIMARY KEY,
+    NOMBRE_TIPO VARCHAR2(50) NOT NULL,
+    PRECIO NUMBER(5,2) NOT NULL
+);
+
+
+CREATE TABLE TICKET (
+    IDTICKET NUMBER PRIMARY KEY,
+    IDTIPO NUMBER REFERENCES TIPOTICKET(IDTIPO),
+    IDVIAJE NUMBER REFERENCES VIAJE(IDVIAJE), 
+    IDESTACION NUMBER REFERENCES ESTACION(IDESTACION),
+    ESTADO VARCHAR2(20) DEFAULT 'EMITIDO',
+    FECHA_HORA_EMISION TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+-- ==========================================
+-- 1. LINEA (10 registros)
+-- ==========================================
+INSERT INTO LINEA VALUES (1, 'Rojo',    3.00);
+INSERT INTO LINEA VALUES (2, 'Amarillo',3.00);
+INSERT INTO LINEA VALUES (3, 'Verde',   3.00);
+INSERT INTO LINEA VALUES (4, 'Azul',    3.00);
+INSERT INTO LINEA VALUES (5, 'Blanco',  3.00);
+INSERT INTO LINEA VALUES (6, 'Naranja', 3.00);
+INSERT INTO LINEA VALUES (7, 'Celeste', 3.00);
+INSERT INTO LINEA VALUES (8, 'Plateado',3.00);
+INSERT INTO LINEA VALUES (9, 'Dorado',  3.00);
+INSERT INTO LINEA VALUES (10,'Morado',  3.00);
+ 
+-- ==========================================
+-- 2. ESTACION (30 registros)
+-- ==========================================
+INSERT INTO ESTACION VALUES (1,  'Estación Central',        1);
+INSERT INTO ESTACION VALUES (2,  'Estación Cementerio',     1);
+INSERT INTO ESTACION VALUES (3,  'Estación Mercado Yungas', 1);
+INSERT INTO ESTACION VALUES (4,  'Estación Faro Murillo',   2);
+INSERT INTO ESTACION VALUES (5,  'Estación 16 de Julio',    2);
+INSERT INTO ESTACION VALUES (6,  'Estación Mirador',        2);
+INSERT INTO ESTACION VALUES (7,  'Estación San Antonio',    3);
+INSERT INTO ESTACION VALUES (8,  'Estación Obelisco',       3);
+INSERT INTO ESTACION VALUES (9,  'Estación Villa Fátima',   3);
+INSERT INTO ESTACION VALUES (10, 'Estación Alto Lima',      4);
+INSERT INTO ESTACION VALUES (11, 'Estación Cosmos 79',      4);
+INSERT INTO ESTACION VALUES (12, 'Estación El Kenko',       4);
+INSERT INTO ESTACION VALUES (13, 'Estación Periférica',     5);
+INSERT INTO ESTACION VALUES (14, 'Estación Ciudadela',      5);
+INSERT INTO ESTACION VALUES (15, 'Estación Riosinho',       5);
+INSERT INTO ESTACION VALUES (16, 'Estación Chijini',        6);
+INSERT INTO ESTACION VALUES (17, 'Estación Sopocachi',      6);
+INSERT INTO ESTACION VALUES (18, 'Estación Miraflores',     6);
+INSERT INTO ESTACION VALUES (19, 'Estación Triangular',     7);
+INSERT INTO ESTACION VALUES (20, 'Estación El Alto Sur',    7);
+INSERT INTO ESTACION VALUES (21, 'Estación Pura Pura',      7);
+INSERT INTO ESTACION VALUES (22, 'Estación Achachicala',    8);
+INSERT INTO ESTACION VALUES (23, 'Estación Santa Barbara',  8);
+INSERT INTO ESTACION VALUES (24, 'Estación Garita Lima',    8);
+INSERT INTO ESTACION VALUES (25, 'Estación 6 de Marzo',     9);
+INSERT INTO ESTACION VALUES (26, 'Estación Villa Adela',    9);
+INSERT INTO ESTACION VALUES (27, 'Estación Senkata',        9);
+INSERT INTO ESTACION VALUES (28, 'Estación Ciudad Satélite',10);
+INSERT INTO ESTACION VALUES (29, 'Estación Ballivian',      10);
+INSERT INTO ESTACION VALUES (30, 'Estación Terminal',       10);
+ 
+-- ==========================================
+-- 3. MOLINETE (30 registros, 1 por estación)
+-- ==========================================
+INSERT INTO MOLINETE VALUES (1,  1,  'SN-EST01-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (2,  2,  'SN-EST02-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (3,  3,  'SN-EST03-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (4,  4,  'SN-EST04-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (5,  5,  'SN-EST05-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (6,  6,  'SN-EST06-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (7,  7,  'SN-EST07-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (8,  8,  'SN-EST08-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (9,  9,  'SN-EST09-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (10, 10, 'SN-EST10-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (11, 11, 'SN-EST11-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (12, 12, 'SN-EST12-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (13, 13, 'SN-EST13-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (14, 14, 'SN-EST14-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (15, 15, 'SN-EST15-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (16, 16, 'SN-EST16-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (17, 17, 'SN-EST17-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (18, 18, 'SN-EST18-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (19, 19, 'SN-EST19-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (20, 20, 'SN-EST20-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (21, 21, 'SN-EST21-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (22, 22, 'SN-EST22-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (23, 23, 'SN-EST23-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (24, 24, 'SN-EST24-MOL01', 'MANTENIMIENTO');
+INSERT INTO MOLINETE VALUES (25, 25, 'SN-EST25-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (26, 26, 'SN-EST26-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (27, 27, 'SN-EST27-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (28, 28, 'SN-EST28-MOL01', 'ACTIVO');
+INSERT INTO MOLINETE VALUES (29, 29, 'SN-EST29-MOL01', 'INACTIVO');
+INSERT INTO MOLINETE VALUES (30, 30, 'SN-EST30-MOL01', 'ACTIVO');
+ 
+-- ==========================================
+-- 4. PASAJERO (30 registros)
+-- ==========================================
+INSERT INTO PASAJERO VALUES ('1234567',  'Carlos',   'Mamani',    'Quispe',    DATE '1990-03-15', 'CI');
+INSERT INTO PASAJERO VALUES ('2345678',  'Maria',    'Flores',    'Condori',   DATE '1985-07-22', 'CI');
+INSERT INTO PASAJERO VALUES ('3456789',  'Juan',     'Quispe',    'Huanca',    DATE '1978-11-08', 'CI');
+INSERT INTO PASAJERO VALUES ('4567890',  'Ana',      'Condori',   'Apaza',     DATE '1995-04-30', 'CI');
+INSERT INTO PASAJERO VALUES ('5678901',  'Luis',     'Apaza',     'Mamani',    DATE '1952-09-12', 'CI');
+INSERT INTO PASAJERO VALUES ('6789012',  'Rosa',     'Huanca',    'Flores',    DATE '1948-01-25', 'CI');
+INSERT INTO PASAJERO VALUES ('7890123',  'Pedro',    'Vargas',    'Quispe',    DATE '2003-06-18', 'CI');
+INSERT INTO PASAJERO VALUES ('8901234',  'Sofia',    'Choque',    'Vargas',    DATE '2004-02-14', 'CI');
+INSERT INTO PASAJERO VALUES ('9012345',  'Diego',    'Limachi',   'Choque',    DATE '1988-08-05', 'CI');
+INSERT INTO PASAJERO VALUES ('1122334',  'Carmen',   'Ticona',    'Limachi',   DATE '1960-12-20', 'CI');
+INSERT INTO PASAJERO VALUES ('2233445',  'Roberto',  'Calizaya',  'Ticona',    DATE '1975-05-10', 'CI');
+INSERT INTO PASAJERO VALUES ('3344556',  'Elena',    'Poma',      'Calizaya',  DATE '1955-03-28', 'CI');
+INSERT INTO PASAJERO VALUES ('4455667',  'Jorge',    'Yujra',     'Poma',      DATE '2002-10-15', 'CI');
+INSERT INTO PASAJERO VALUES ('5566778',  'Patricia', 'Marca',     'Yujra',     DATE '1992-07-07', 'CI');
+INSERT INTO PASAJERO VALUES ('6677889',  'Miguel',   'Colque',    'Marca',     DATE '1983-04-19', 'CI');
+INSERT INTO PASAJERO VALUES ('7788990',  'Laura',    'Ramos',     'Colque',    DATE '1949-11-30', 'CI');
+INSERT INTO PASAJERO VALUES ('8899001',  'Fernando', 'Soria',     'Ramos',     DATE '1998-01-08', 'CI');
+INSERT INTO PASAJERO VALUES ('9900112',  'Claudia',  'Bustillos', 'Soria',     DATE '2003-09-23', 'CI');
+INSERT INTO PASAJERO VALUES ('1011223',  'Alejandro','Torrez',    'Bustillos', DATE '1970-06-14', 'CI');
+INSERT INTO PASAJERO VALUES ('1121334',  'Gabriela', 'Nina',      'Torrez',    DATE '1987-02-28', 'CI');
+INSERT INTO PASAJERO VALUES ('1231445',  'Ricardo',  'Callisaya', 'Nina',      DATE '1951-08-17', 'CI');
+INSERT INTO PASAJERO VALUES ('1341556',  'Valeria',  'Gutierrez', 'Callisaya', DATE '2001-05-03', 'CI');
+INSERT INTO PASAJERO VALUES ('1451667',  'Marcos',   'Alcon',     'Gutierrez', DATE '1994-12-11', 'CI');
+INSERT INTO PASAJERO VALUES ('1561778',  'Natalia',  'Bernabe',   'Alcon',     DATE '1966-07-25', 'CI');
+INSERT INTO PASAJERO VALUES ('1671889',  'Pablo',    'Chura',     'Bernabe',   DATE '2002-03-09', 'CI');
+INSERT INTO PASAJERO VALUES ('1781990',  'Monica',   'Laime',     'Chura',     DATE '1979-10-16', 'CI');
+INSERT INTO PASAJERO VALUES ('1892001',  'Cesar',    'Inquilla',  'Laime',     DATE '1958-04-22', 'CI');
+INSERT INTO PASAJERO VALUES ('1902112',  'Sandra',   'Pacajes',   'Inquilla',  DATE '1996-01-30', 'CI');
+INSERT INTO PASAJERO VALUES ('2012223',  'Hugo',     'Villca',    'Pacajes',   DATE '1947-09-05', 'CI');
+INSERT INTO PASAJERO VALUES ('2122334',  'Beatriz',  'Condori',   'Villca',    DATE '2000-06-21', 'CI');
+ 
+-- ==========================================
+-- 5. CATEGORIA_TARJETA (5 registros)
+-- ==========================================
+INSERT INTO CATEGORIA_TARJETA VALUES (1, 'Normal',            0.00);
+INSERT INTO CATEGORIA_TARJETA VALUES (2, 'Adulto Mayor',     50.00);
+INSERT INTO CATEGORIA_TARJETA VALUES (3, 'Discapacidad',     50.00);
+INSERT INTO CATEGORIA_TARJETA VALUES (4, 'Estudiante',       25.00);
+INSERT INTO CATEGORIA_TARJETA VALUES (5, 'Turismo',           0.00);
+ 
+-- ==========================================
+-- 6. TARJETA (30 registros)
+-- ==========================================
+INSERT INTO TARJETA VALUES (1,  '1234567',  1, 25.00, DATE '2024-01-10');
+INSERT INTO TARJETA VALUES (2,  '2345678',  1, 18.50, DATE '2024-01-15');
+INSERT INTO TARJETA VALUES (3,  '3456789',  2, 30.00, DATE '2024-01-20');
+INSERT INTO TARJETA VALUES (4,  '4567890',  4, 12.00, DATE '2024-02-01');
+INSERT INTO TARJETA VALUES (5,  '5678901',  2, 45.00, DATE '2024-02-05');
+INSERT INTO TARJETA VALUES (6,  '6789012',  2, 22.00, DATE '2024-02-10');
+INSERT INTO TARJETA VALUES (7,  '7890123',  4, 8.00,  DATE '2024-02-14');
+INSERT INTO TARJETA VALUES (8,  '8901234',  4, 15.00, DATE '2024-02-20');
+INSERT INTO TARJETA VALUES (9,  '9012345',  1, 33.00, DATE '2024-03-01');
+INSERT INTO TARJETA VALUES (10, '1122334',  2, 27.50, DATE '2024-03-05');
+INSERT INTO TARJETA VALUES (11, '2233445',  1, 10.00, DATE '2024-03-10');
+INSERT INTO TARJETA VALUES (12, '3344556',  2, 50.00, DATE '2024-03-15');
+INSERT INTO TARJETA VALUES (13, '4455667',  4, 6.00,  DATE '2024-03-20');
+INSERT INTO TARJETA VALUES (14, '5566778',  1, 19.00, DATE '2024-04-01');
+INSERT INTO TARJETA VALUES (15, '6677889',  1, 40.00, DATE '2024-04-05');
+INSERT INTO TARJETA VALUES (16, '7788990',  2, 35.00, DATE '2024-04-10');
+INSERT INTO TARJETA VALUES (17, '8899001',  1, 14.00, DATE '2024-04-15');
+INSERT INTO TARJETA VALUES (18, '9900112',  4, 9.00,  DATE '2024-04-20');
+INSERT INTO TARJETA VALUES (19, '1011223',  1, 28.00, DATE '2024-05-01');
+INSERT INTO TARJETA VALUES (20, '1121334',  1, 16.00, DATE '2024-05-05');
+INSERT INTO TARJETA VALUES (21, '1231445',  2, 42.00, DATE '2024-05-10');
+INSERT INTO TARJETA VALUES (22, '1341556',  4, 11.00, DATE '2024-05-15');
+INSERT INTO TARJETA VALUES (23, '1451667',  1, 23.00, DATE '2024-05-20');
+INSERT INTO TARJETA VALUES (24, '1561778',  3, 38.00, DATE '2024-06-01');
+INSERT INTO TARJETA VALUES (25, '1671889',  4, 7.00,  DATE '2024-06-05');
+INSERT INTO TARJETA VALUES (26, '1781990',  1, 31.00, DATE '2024-06-10');
+INSERT INTO TARJETA VALUES (27, '1892001',  2, 20.00, DATE '2024-06-15');
+INSERT INTO TARJETA VALUES (28, '1902112',  1, 13.00, DATE '2024-06-20');
+INSERT INTO TARJETA VALUES (29, '2012223',  2, 48.00, DATE '2024-07-01');
+INSERT INTO TARJETA VALUES (30, '2122334',  4, 5.00,  DATE '2024-07-05');
+ 
+-- ==========================================
+-- 7. RECARGA (30 registros)
+-- ==========================================
+INSERT INTO RECARGA VALUES (1,  1,  20.00, TIMESTAMP '2024-08-01 08:30:00');
+INSERT INTO RECARGA VALUES (2,  2,  15.00, TIMESTAMP '2024-08-01 09:00:00');
+INSERT INTO RECARGA VALUES (3,  3,  30.00, TIMESTAMP '2024-08-02 07:45:00');
+INSERT INTO RECARGA VALUES (4,  4,  10.00, TIMESTAMP '2024-08-02 10:15:00');
+INSERT INTO RECARGA VALUES (5,  5,  25.00, TIMESTAMP '2024-08-03 08:00:00');
+INSERT INTO RECARGA VALUES (6,  6,  20.00, TIMESTAMP '2024-08-03 11:30:00');
+INSERT INTO RECARGA VALUES (7,  7,  10.00, TIMESTAMP '2024-08-04 07:30:00');
+INSERT INTO RECARGA VALUES (8,  8,  15.00, TIMESTAMP '2024-08-04 09:45:00');
+INSERT INTO RECARGA VALUES (9,  9,  30.00, TIMESTAMP '2024-08-05 08:20:00');
+INSERT INTO RECARGA VALUES (10, 10, 20.00, TIMESTAMP '2024-08-05 10:00:00');
+INSERT INTO RECARGA VALUES (11, 11, 10.00, TIMESTAMP '2024-08-06 07:55:00');
+INSERT INTO RECARGA VALUES (12, 12, 50.00, TIMESTAMP '2024-08-06 12:00:00');
+INSERT INTO RECARGA VALUES (13, 13, 10.00, TIMESTAMP '2024-08-07 08:10:00');
+INSERT INTO RECARGA VALUES (14, 14, 20.00, TIMESTAMP '2024-08-07 09:30:00');
+INSERT INTO RECARGA VALUES (15, 15, 40.00, TIMESTAMP '2024-08-08 07:40:00');
+INSERT INTO RECARGA VALUES (16, 16, 25.00, TIMESTAMP '2024-08-08 11:00:00');
+INSERT INTO RECARGA VALUES (17, 17, 15.00, TIMESTAMP '2024-08-09 08:05:00');
+INSERT INTO RECARGA VALUES (18, 18, 10.00, TIMESTAMP '2024-08-09 10:20:00');
+INSERT INTO RECARGA VALUES (19, 19, 30.00, TIMESTAMP '2024-08-10 07:50:00');
+INSERT INTO RECARGA VALUES (20, 20, 20.00, TIMESTAMP '2024-08-10 09:15:00');
+INSERT INTO RECARGA VALUES (21, 21, 40.00, TIMESTAMP '2024-08-11 08:00:00');
+INSERT INTO RECARGA VALUES (22, 22, 10.00, TIMESTAMP '2024-08-11 10:45:00');
+INSERT INTO RECARGA VALUES (23, 23, 25.00, TIMESTAMP '2024-08-12 07:35:00');
+INSERT INTO RECARGA VALUES (24, 24, 30.00, TIMESTAMP '2024-08-12 09:00:00');
+INSERT INTO RECARGA VALUES (25, 25, 10.00, TIMESTAMP '2024-08-13 08:25:00');
+INSERT INTO RECARGA VALUES (26, 26, 20.00, TIMESTAMP '2024-08-13 11:15:00');
+INSERT INTO RECARGA VALUES (27, 27, 15.00, TIMESTAMP '2024-08-14 07:45:00');
+INSERT INTO RECARGA VALUES (28, 28, 10.00, TIMESTAMP '2024-08-14 09:30:00');
+INSERT INTO RECARGA VALUES (29, 29, 50.00, TIMESTAMP '2024-08-15 08:00:00');
+INSERT INTO RECARGA VALUES (30, 30, 10.00, TIMESTAMP '2024-08-15 10:30:00');
+ 
+-- ==========================================
+-- 8. VIAJE (30 registros)
+-- Lógica tarifaria aplicada:
+-- Normal       = 3.00 Bs
+-- Adulto Mayor = 1.50 Bs (50% desc)
+-- Discapacidad = 1.50 Bs (50% desc)
+-- Estudiante   = 2.25 Bs (25% desc)
+-- Transbordo   = 2.00 Bs
+-- ==========================================
+INSERT INTO VIAJE VALUES (1,  1,  1,  3.00, 'N', TIMESTAMP '2024-09-02 07:05:00');
+INSERT INTO VIAJE VALUES (2,  2,  3,  3.00, 'N', TIMESTAMP '2024-09-02 07:12:00');
+INSERT INTO VIAJE VALUES (3,  3,  5,  1.50, 'N', TIMESTAMP '2024-09-02 07:20:00');
+INSERT INTO VIAJE VALUES (4,  4,  7,  2.25, 'N', TIMESTAMP '2024-09-02 07:35:00');
+INSERT INTO VIAJE VALUES (5,  5,  9,  1.50, 'N', TIMESTAMP '2024-09-02 07:40:00');
+INSERT INTO VIAJE VALUES (6,  6,  11, 1.50, 'N', TIMESTAMP '2024-09-02 07:55:00');
+INSERT INTO VIAJE VALUES (7,  7,  13, 2.25, 'N', TIMESTAMP '2024-09-02 08:00:00');
+INSERT INTO VIAJE VALUES (8,  8,  15, 2.25, 'N', TIMESTAMP '2024-09-02 08:10:00');
+INSERT INTO VIAJE VALUES (9,  9,  17, 3.00, 'N', TIMESTAMP '2024-09-02 08:15:00');
+INSERT INTO VIAJE VALUES (10, 10, 19, 1.50, 'N', TIMESTAMP '2024-09-02 08:25:00');
+INSERT INTO VIAJE VALUES (11, 1,  2,  2.00, 'S', TIMESTAMP '2024-09-02 08:30:00');
+INSERT INTO VIAJE VALUES (12, 2,  4,  2.00, 'S', TIMESTAMP '2024-09-02 08:45:00');
+INSERT INTO VIAJE VALUES (13, 9,  6,  2.00, 'S', TIMESTAMP '2024-09-02 09:00:00');
+INSERT INTO VIAJE VALUES (14, 11, 8,  3.00, 'N', TIMESTAMP '2024-09-02 09:10:00');
+INSERT INTO VIAJE VALUES (15, 12, 10, 1.50, 'N', TIMESTAMP '2024-09-02 09:20:00');
+INSERT INTO VIAJE VALUES (16, 13, 12, 2.25, 'N', TIMESTAMP '2024-09-02 09:35:00');
+INSERT INTO VIAJE VALUES (17, 14, 14, 3.00, 'N', TIMESTAMP '2024-09-02 09:40:00');
+INSERT INTO VIAJE VALUES (18, 15, 16, 3.00, 'N', TIMESTAMP '2024-09-02 09:55:00');
+INSERT INTO VIAJE VALUES (19, 16, 18, 1.50, 'N', TIMESTAMP '2024-09-02 10:05:00');
+INSERT INTO VIAJE VALUES (20, 17, 20, 3.00, 'N', TIMESTAMP '2024-09-02 10:15:00');
+INSERT INTO VIAJE VALUES (21, 18, 22, 2.25, 'N', TIMESTAMP '2024-09-02 10:25:00');
+INSERT INTO VIAJE VALUES (22, 19, 1,  3.00, 'N', TIMESTAMP '2024-09-02 10:35:00');
+INSERT INTO VIAJE VALUES (23, 20, 3,  3.00, 'N', TIMESTAMP '2024-09-02 10:45:00');
+INSERT INTO VIAJE VALUES (24, 21, 5,  1.50, 'N', TIMESTAMP '2024-09-02 11:00:00');
+INSERT INTO VIAJE VALUES (25, 22, 7,  2.25, 'N', TIMESTAMP '2024-09-02 11:10:00');
+INSERT INTO VIAJE VALUES (26, 23, 9,  3.00, 'N', TIMESTAMP '2024-09-02 11:20:00');
+INSERT INTO VIAJE VALUES (27, 24, 11, 1.50, 'N', TIMESTAMP '2024-09-02 11:30:00');
+INSERT INTO VIAJE VALUES (28, 25, 13, 2.25, 'N', TIMESTAMP '2024-09-02 11:40:00');
+INSERT INTO VIAJE VALUES (29, 26, 15, 3.00, 'N', TIMESTAMP '2024-09-02 11:50:00');
+INSERT INTO VIAJE VALUES (30, 27, 17, 1.50, 'N', TIMESTAMP '2024-09-02 12:00:00');
+ 
+-- ==========================================
+-- 9. TIPOTICKET (4 registros)
+-- ==========================================
+INSERT INTO TIPOTICKET VALUES (1, 'Normal',  3.00);
+INSERT INTO TIPOTICKET VALUES (2, 'Turismo', 5.00);
+INSERT INTO TIPOTICKET VALUES (3, 'Escolar', 2.25);
+INSERT INTO TIPOTICKET VALUES (4, 'Express', 3.00);
+ 
+-- ==========================================
+-- 10. TICKET (30 registros)
+-- IDVIAJE NULL = ticket emitido aún no usado
+-- ==========================================
+INSERT INTO TICKET VALUES (1,  1, NULL, 1,  'EMITIDO',  TIMESTAMP '2024-09-02 06:50:00');
+INSERT INTO TICKET VALUES (2,  1, NULL, 3,  'EMITIDO',  TIMESTAMP '2024-09-02 06:52:00');
+INSERT INTO TICKET VALUES (3,  2, NULL, 5,  'EMITIDO',  TIMESTAMP '2024-09-02 06:55:00');
+INSERT INTO TICKET VALUES (4,  1, NULL, 7,  'EMITIDO',  TIMESTAMP '2024-09-02 07:00:00');
+INSERT INTO TICKET VALUES (5,  2, NULL, 9,  'EMITIDO',  TIMESTAMP '2024-09-02 07:02:00');
+INSERT INTO TICKET VALUES (6,  1, NULL, 11, 'EMITIDO',  TIMESTAMP '2024-09-02 07:04:00');
+INSERT INTO TICKET VALUES (7,  3, NULL, 13, 'EMITIDO',  TIMESTAMP '2024-09-02 07:06:00');
+INSERT INTO TICKET VALUES (8,  1, NULL, 15, 'EMITIDO',  TIMESTAMP '2024-09-02 07:08:00');
+INSERT INTO TICKET VALUES (9,  2, NULL, 17, 'EMITIDO',  TIMESTAMP '2024-09-02 07:10:00');
+INSERT INTO TICKET VALUES (10, 1, NULL, 19, 'EMITIDO',  TIMESTAMP '2024-09-02 07:12:00');
+INSERT INTO TICKET VALUES (11, 1, NULL, 2,  'EMITIDO',  TIMESTAMP '2024-09-02 07:14:00');
+INSERT INTO TICKET VALUES (12, 2, NULL, 4,  'EMITIDO',  TIMESTAMP '2024-09-02 07:16:00');
+INSERT INTO TICKET VALUES (13, 1, NULL, 6,  'EMITIDO',  TIMESTAMP '2024-09-02 07:18:00');
+INSERT INTO TICKET VALUES (14, 3, NULL, 8,  'EMITIDO',  TIMESTAMP '2024-09-02 07:20:00');
+INSERT INTO TICKET VALUES (15, 2, NULL, 10, 'EMITIDO',  TIMESTAMP '2024-09-02 07:22:00');
+INSERT INTO TICKET VALUES (16, 1, NULL, 12, 'USADO',    TIMESTAMP '2024-09-02 07:24:00');
+INSERT INTO TICKET VALUES (17, 1, NULL, 14, 'USADO',    TIMESTAMP '2024-09-02 07:26:00');
+INSERT INTO TICKET VALUES (18, 2, NULL, 16, 'USADO',    TIMESTAMP '2024-09-02 07:28:00');
+INSERT INTO TICKET VALUES (19, 1, NULL, 18, 'USADO',    TIMESTAMP '2024-09-02 07:30:00');
+INSERT INTO TICKET VALUES (20, 4, NULL, 20, 'USADO',    TIMESTAMP '2024-09-02 07:32:00');
+INSERT INTO TICKET VALUES (21, 1, NULL, 21, 'USADO',    TIMESTAMP '2024-09-02 07:34:00');
+INSERT INTO TICKET VALUES (22, 2, NULL, 22, 'EMITIDO',  TIMESTAMP '2024-09-02 07:36:00');
+INSERT INTO TICKET VALUES (23, 1, NULL, 23, 'EMITIDO',  TIMESTAMP '2024-09-02 07:38:00');
+INSERT INTO TICKET VALUES (24, 3, NULL, 24, 'ANULADO',  TIMESTAMP '2024-09-02 07:40:00');
+INSERT INTO TICKET VALUES (25, 1, NULL, 25, 'EMITIDO',  TIMESTAMP '2024-09-02 07:42:00');
+INSERT INTO TICKET VALUES (26, 2, NULL, 26, 'EMITIDO',  TIMESTAMP '2024-09-02 07:44:00');
+INSERT INTO TICKET VALUES (27, 1, NULL, 27, 'USADO',    TIMESTAMP '2024-09-02 07:46:00');
+INSERT INTO TICKET VALUES (28, 4, NULL, 28, 'EMITIDO',  TIMESTAMP '2024-09-02 07:48:00');
+INSERT INTO TICKET VALUES (29, 1, NULL, 29, 'EMITIDO',  TIMESTAMP '2024-09-02 07:50:00');
+INSERT INTO TICKET VALUES (30, 2, NULL, 30, 'USADO',    TIMESTAMP '2024-09-02 07:52:00');
+
+
+
+--PROCEDIMIENTOS--
+--PROCEDIMIENTO 1  CU01 INSERTAR UNA TARJETA VALIDANDO QUE EL CI EXISTA EN PASAJERO Y QUE LA CATEGORIA SEA VALIDA--
+CREATE TABLE TABLA_AUXILIAR(
+	dato_importante VARCHAR2(100),
+	usuario_consulta VARCHAR2(50),
+	fecha_consulta DATE
+);
+
+CREATE OR REPLACE PROCEDURE sp_emitir_tarjeta(p_ci VARCHAR2, p_idCategoria NUMBER, p_saldo NUMBER)
+AS
+	v_existe NUMBER;
+	
+BEGIN
+	SELECT COUNT(*) INTO v_existe
+	FROM pasajero
+	WHERE ci = p_ci;
+	
+	IF v_existe = 0 THEN 
+		RAISE_APPLICATION_ERROR(-20001, 'EL PASAJERO CON CARNET DE IDENTIDAD: ' || p_ci || 'NO EXISTE');
+	END IF;
+	
+	SELECT COUNT(*) INTO v_existe
+	FROM categoria_tarjeta
+	WHERE idcategoria = p_idCategoria;
+	
+	IF v_existe = 0 THEN 
+		RAISE_APPLICATION_ERROR(-20002, 'CATEGORIA INEXISTENTE');
+	END IF;
+	
+	INSERT INTO tarjeta(idtarjeta, ci, idcategoria, saldo, fecha_emision)
+	VALUES (SEQ_TARJETA.NEXTVAL, p_ci, p_idCategoria, p_saldo, SYSDATE);
+	
+	COMMIT;
+EXCEPTION 
+	WHEN OTHERS THEN
+		ROLLBACK;
+		COMMIT;
+END;
+
+
+
+CREATE SEQUENCE SEQ_TARJETA
+START WITH 31
+INCREMENT BY 1
+NOCACHE;
+CREATE SEQUENCE SEQ_TICKET
+START WITH 31
+INCREMENT BY 1
+NOCACHE;
+CREATE SEQUENCE SEQ_RECARGA
+START WITH 31
+INCREMENT BY 1
+NOCACHE;
+	
+--PROCEDIMIENTO 2 CU01 EMITIR UN TICKET SI EL LA ESTACION Y EL TIPO DE TICKET SON VALIDOS--
+
+CREATE OR REPLACE PROCEDURE sp_emitir_ticket(p_idtipo NUMBER , p_idestacion NUMBER, p_idviaje NUMBER )
+AS
+	v_existe NUMBER;
+BEGIN
+	SELECT COUNT(*) INTO v_existe
+	FROM tipoticket
+	WHERE idtipo = p_idtipo;
+	
+	IF v_existe = 0 THEN
+		RAISE_APPLICATION_ERROR(-20003, 'EL TIPO DE TICKET ES INEXISTENTE');
+	END IF;
+	
+	SELECT COUNT(*) INTO v_existe
+	FROM estacion
+	WHERE idestacion = p_idestacion;
+	
+	IF v_existe = 0 THEN
+		RAISE_APPLICATION_ERROR(-20003, 'LA ESTACION INDICADA NO EXISTE');
+	END IF;
+	
+	
+	INSERT INTO ticket(idticket, idtipo, idviaje, idestacion, estado, fecha_hora_emision)
+	VALUES (SEQ_TICKET.NEXTVAL, p_idtipo, p_idviaje, p_idestacion, 'EMITIDO', CURRENT_TIMESTAMP);
+	
+	COMMIT;
+EXCEPTION
+	WHEN OTHERS THEN
+		ROLLBACK;
+		COMMIT;
+	
+END;
+--TRIGGER 1 CU01 AUDITORIA DE CAMBIOS EN SALDOS DE TARJETAS--
+CREATE TABLE AUDITORIA (
+    IDAUDITORIA  NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    TABLA        VARCHAR2(50),
+    ACCION       VARCHAR2(10),
+    USUARIO      VARCHAR2(50),
+    FECHA_HORA   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    DATO_ANTES   VARCHAR2(500),
+    DATO_DESPUES VARCHAR2(500)
+);
+
+
+CREATE OR REPLACE TRIGGER trg_auditoria_cambios
+AFTER INSERT OR DELETE OR UPDATE ON tarjeta
+FOR EACH ROW
+BEGIN
+    IF INSERTING THEN
+        INSERT INTO AUDITORIA (TABLA, ACCION, USUARIO, DATO_ANTES, DATO_DESPUES)
+        VALUES (
+            'TARJETA',
+            'INSERT',
+            USER,
+            NULL,
+            'ID: ' || :NEW.IDTARJETA || 
+            ' | CI: ' || :NEW.CI || 
+            ' | SALDO: ' || :NEW.SALDO || 
+            ' | CATEGORIA: ' || :NEW.IDCATEGORIA
+        );
+
+    ELSIF UPDATING THEN
+        INSERT INTO AUDITORIA (TABLA, ACCION, USUARIO, DATO_ANTES, DATO_DESPUES)
+        VALUES (
+            'TARJETA',
+            'UPDATE',
+            USER,
+            'ID: ' || :OLD.IDTARJETA || 
+            ' | CI: ' || :OLD.CI || 
+            ' | SALDO: ' || :OLD.SALDO || 
+            ' | CATEGORIA: ' || :OLD.IDCATEGORIA,
+            'ID: ' || :NEW.IDTARJETA || 
+            ' | CI: ' || :NEW.CI || 
+            ' | SALDO: ' || :NEW.SALDO || 
+            ' | CATEGORIA: ' || :NEW.IDCATEGORIA
+        );
+
+    ELSIF DELETING THEN
+        INSERT INTO AUDITORIA (TABLA, ACCION, USUARIO, DATO_ANTES, DATO_DESPUES)
+        VALUES (
+            'TARJETA',
+            'DELETE',
+            USER,
+            'ID: ' || :OLD.IDTARJETA || 
+            ' | CI: ' || :OLD.CI || 
+            ' | SALDO: ' || :OLD.SALDO || 
+            ' | CATEGORIA: ' || :OLD.IDCATEGORIA,
+            NULL
+        );
+    END IF;
+END;
+
+
+--TRIGGER 5 CU01 BLOQUEO DE TARJETAS LOS DIAS DOMINGO--
+CREATE OR REPLACE TRIGGER trg_bloqueo_domingo
+BEFORE INSERT ON tarjeta
+FOR EACH ROW
+BEGIN
+    IF TO_CHAR(SYSDATE, 'DY', 'NLS_DATE_LANGUAGE=SPANISH') = 'DOM' THEN
+        RAISE_APPLICATION_ERROR(-20003, 'RESTRICCIÓN: La oficina de atención al cliente no emite tarjetas los días domingo.');
+    END IF;
+END;
+
+
+--PROCEDIMIENTO 3 CU02 RECARGA DE SALDO EN UNA TARJETA--
+CREATE OR REPLACE PROCEDURE sp_recarga_saldo(p_idtarjeta NUMBER, p_monto NUMBER)
+AS
+	v_saldo NUMBER;
+	v_existe NUMBER;
+BEGIN
+	SELECT COUNT(*), saldo INTO v_existe, v_saldo
+	FROM tarjeta
+	WHERE idtarjeta = p_idtarjeta
+	GROUP BY saldo;
+	IF v_existe = 0 THEN 
+		RAISE_APPLICATION_ERROR(-20004, 'TARJETA INEXISTENTE');
+	END IF;
+	IF p_monto <= 0 THEN
+		RAISE_APPLICATION_ERROR(-20005, 'MONTO DE RECARGA DEBE SER MAYOR A 0Bs.');
+	END IF;
+	INSERT INTO recarga (idrecarga, idtarjeta, monto_abonado, fecha_hora)
+	VALUES (SEQ_RECARGA.NEXTVAL, p_idtarjeta, p_monto, CURRENT_TIMESTAMP);
+	
+	UPDATE tarjeta
+	SET saldo = saldo + p_monto  
+	WHERE idtarjeta = p_idtarjeta;
+	
+	COMMIT;
+EXCEPTION
+	WHEN OTHERS THEN
+		ROLLBACK;
+		COMMIT;
+END;
+--TRIGGER 2 CU02 VALIDACION DE RECARGAS MAYOR O IGUAL A 10BS--
+CREATE OR REPLACE TRIGGER trg_validacion_recargas
+BEFORE INSERT OR UPDATE ON recarga
+FOR EACH ROW
+BEGIN
+	IF :NEW.monto_abonado < 10 THEN
+		RAISE_APPLICATION_ERROR(-20001, 'LAS RECARAS DEBEN SER MAYORES O EQUIVALENTES A 10Bs.');
+	END IF;
+END;
+
+
+
+
+
+
+-----------------------------------------------
+
+--FUNCION 1 CU03 CALCULAR LA TARIFA--
+CREATE OR REPLACE FUNCTION fn_calcular_tarifa(p_idtarjeta NUMBER , p_estransbordo VARCHAR2)
+RETURN NUMBER
+AS
+	v_tarifa_base linea.tarifa_base%TYPE;
+	v_descuento categoria_tarjeta.descuento_porcentaje%TYPE;
+	v_monto_final NUMBER;
+BEGIN
+	IF p_estransbordo = 'S' THEN
+		RETURN 2.00;
+	END IF;
+
+	SELECT l.tarifa_base, ct.descuento_porcentaje INTO v_tarifa_base, v_descuento
+	FROM tarjeta t
+	INNER JOIN categoria_tarjeta ct ON ct.idcategoria = t.idcategoria
+	INNER JOIN molinete m ON m.idmolinete = (
+		SELECT idmolinete FROM (
+            SELECT idmolinete FROM viaje
+            WHERE idtarjeta = p_idtarjeta
+            ORDER BY fecha_hora_ingreso DESC
+        ) WHERE ROWNUM = 1
+	)
+	INNER JOIN estacion e ON e.idestacion = m.idestacion
+	INNER JOIN linea l ON l.idlinea = e.idlinea
+	WHERE t.idtarjeta = p_idtarjeta;
+	
+	v_monto_final := v_tarifa_base - (v_tarifa_base * v_descuento / 100);
+	RETURN v_monto_final;
+EXCEPTION
+	WHEN no_data_found THEN
+		RETURN 3.00;
+END;
+--FUNCION 2 CU03 VERIFICAR SI ES TRANSBORDO
+CREATE OR REPLACE FUNCTION fn_es_transbordo(p_idtarjeta NUMBER, p_idmolinete NUMBER)
+RETURN VARCHAR2
+AS
+	v_ultimo_viaje TIMESTAMP;
+	v_ultima_linea NUMBER;
+	v_linea_actual NUMBER;
+	v_minutos NUMBER;
+BEGIN
+	SELECT e.idlinea INTO v_linea_actual
+	FROM molinete m
+	INNER JOIN estacion e ON e.idestacion = m.idestacion
+	WHERE m.idmolinete = p_idmolinete;
+	
+	SELECT fecha_hora_ingreso, idlinea
+	INTO v_ultimo_viaje, v_ultima_linea
+	FROM (
+        SELECT v.fecha_hora_ingreso, e.idlinea
+        FROM viaje v
+        INNER JOIN molinete m ON m.idmolinete = v.idmolinete
+        INNER JOIN estacion e ON e.idestacion = m.idestacion
+        WHERE v.idtarjeta = p_idtarjeta
+        ORDER BY v.fecha_hora_ingreso DESC
+    )
+    WHERE ROWNUM = 1;
+	
+	v_minutos := (SYSDATE - CAST(v_ultimo_viaje AS DATE )) * 24 * 60;
+	
+	IF v_minutos <= 60 AND v_ultima_linea != v_linea_actual THEN 
+		RETURN 'S';
+	ELSE 
+		RETURN 'N';
+	END IF;
+EXCEPTION
+	WHEN no_data_found THEN 
+		RETURN 'N';
+END;
+--PROCEDIMIENTO 5 CU03 REGISTRO DEL ACCESO--
+CREATE OR REPLACE PROCEDURE sp_registrar_acceso(p_idtarjeta NUMBER, p_idmolinete NUMBER)
+AS
+	v_saldo tarjeta.saldo%TYPE;
+	v_estransbordo VARCHAR2(5); 
+	v_monto NUMBER;
+	v_existe NUMBER;
+BEGIN
+
+	SELECT COUNT(*) INTO v_existe
+	FROM tarjeta
+	WHERE idtarjeta = p_idtarjeta;
+	
+	IF v_existe = 0 THEN 
+		RAISE_APPLICATION_ERROR(-20001, 'TARJETA NO ENCONTRADA');
+	END IF;
+	
+
+    SELECT saldo INTO v_saldo
+    FROM tarjeta
+    WHERE idtarjeta = p_idtarjeta;
+
+  
+	SELECT COUNT(*) INTO v_existe
+    FROM MOLINETE
+    WHERE IDMOLINETE = p_idmolinete
+    AND ESTADO_OPERATIVO = 'ACTIVO';
+
+    IF v_existe = 0 THEN
+        RAISE_APPLICATION_ERROR(-20002, 'EL MOLINETE NO ESTA OPERANDO');
+    END IF;
+    
+
+    v_estransbordo := fn_es_transbordo(p_idtarjeta, p_idmolinete);
+    v_monto := fn_calcular_tarifa(p_idtarjeta, v_estransbordo);
+    
+
+    IF v_saldo < v_monto THEN 
+    	RAISE_APPLICATION_ERROR(-20006, 'SALDO INSUFICIENTE');
+    END IF;
+    
+
+    INSERT INTO VIAJE (IDVIAJE, IDTARJETA, IDMOLINETE, MONTO_COBRADO, ESTRANSBORDO, FECHA_HORA_INGRESO)
+    VALUES (SEQ_VIAJE.NEXTVAL, p_idtarjeta, p_idmolinete, v_monto, v_estransbordo, CURRENT_TIMESTAMP);
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+END;
+
+CREATE SEQUENCE SEQ_VIAJE
+START WITH 31
+INCREMENT BY 1
+NOCACHE;
+
+--TRIGGER 4 CU03 AUTOMATIZACIÓN DE DESCUENTO DE SALDO EN TARJETA--
+CREATE OR REPLACE TRIGGER trg_auto_cobro_viaje
+AFTER INSERT ON viaje
+FOR EACH ROW
+BEGIN
+    IF :NEW.idtarjeta IS NOT NULL THEN
+        UPDATE tarjeta SET saldo = saldo - :NEW.monto_cobrado
+        WHERE idtarjeta= :NEW.idtarjeta;
+    END IF;
+END;
+
+
+--------------------------------------------------------------------------
+--PROCEDIMIENTO 6 CU04 MOSTRAR EL VIAJE REGISTRADO DE LA TARJETA DEL PASAJERO X--
+CREATE OR REPLACE PROCEDURE sp_mostrar_viaje(x_ci VARCHAR2)
+AS
+	CURSOR c1 IS 
+		SELECT p.nombre,p.paterno, p.materno, v.idviaje, v.fecha_hora_ingreso
+		FROM viaje v
+		INNER JOIN tarjeta t ON t.idtarjeta = v.idtarjeta
+		INNER JOIN pasajero p ON p.ci = t.ci
+		WHERE t.ci = x_ci;
+	p_nombre pasajero.nombre%TYPE;
+	p_paterno pasajero.paterno%TYPE;
+	p_materno pasajero.materno%TYPE;
+	v_id viaje.idviaje%TYPE;
+	v_hora_fecha viaje.fecha_hora_ingreso%TYPE;
+	
+BEGIN
+	OPEN c1;
+	LOOP
+		FETCH c1 INTO p_nombre,p_paterno, p_materno ,v_id, v_hora_fecha;
+		EXIT WHEN c1%NOTFOUND;
+		INSERT INTO TABLA_AUXILIAR (dato_importante, usuario_consulta, fecha_consulta)
+        VALUES (
+            'Respaldo Viaje: ' || v_id || ' - ' || p_nombre || ' ' || p_paterno, USER,SYSDATE);
+	END LOOP;
+	CLOSE c1;
+END;
+
+
+
+
+
+--FUNCIONES Y PAQUETES CU04--
+CREATE OR REPLACE PACKAGE pkg_operaciones_teleferico AS
+
+    FUNCTION fn_edad_pasajero_anios(p_ci VARCHAR2) RETURN NUMBER;
+    FUNCTION fn_antiguedad_tarjeta_meses(p_idtarjeta NUMBER) RETURN NUMBER;
+    FUNCTION fn_dias_emision_ticket(p_idticket NUMBER) RETURN NUMBER;
+
+
+    PROCEDURE sp_mostrar_viaje(x_ci VARCHAR2);
+    PROCEDURE sp_mostrar_lineas_molinetes;
+END pkg_operaciones_teleferico;
+
+
+CREATE OR REPLACE PACKAGE BODY pkg_operaciones_teleferico AS
+    -- Función 1: Calcular Edad en Años
+    FUNCTION fn_edad_pasajero_anios(p_ci VARCHAR2) RETURN NUMBER IS
+        v_fecha_nac DATE;
+    BEGIN
+        SELECT FECHANAC INTO v_fecha_nac FROM PASAJERO WHERE CI = p_ci;
+        RETURN TRUNC(MONTHS_BETWEEN(SYSDATE, v_fecha_nac) / 12);
+    END;
+
+    -- Función 2: Calcular Antigüedad de Tarjeta en Meses
+    FUNCTION fn_antiguedad_tarjeta_meses(p_idtarjeta NUMBER) RETURN NUMBER IS
+        v_fecha_emision DATE;
+    BEGIN
+        SELECT FECHA_EMISION INTO v_fecha_emision FROM TARJETA WHERE IDTARJETA = p_idtarjeta;
+        RETURN TRUNC(MONTHS_BETWEEN(SYSDATE, v_fecha_emision));
+    END;
+
+    -- Función 3: Calcular Días desde la emisión de un Ticket
+    FUNCTION fn_dias_emision_ticket(p_idticket NUMBER) RETURN NUMBER IS
+        v_fecha_emision TIMESTAMP;
+    BEGIN
+        SELECT FECHA_HORA_EMISION INTO v_fecha_emision FROM TICKET WHERE IDTICKET = p_idticket;
+        
+        RETURN TRUNC(SYSDATE - CAST(v_fecha_emision AS DATE));
+    END;
+
+
+    PROCEDURE sp_mostrar_viaje(x_ci VARCHAR2) AS
+        CURSOR c1 IS 
+            SELECT p.nombre, p.paterno, p.materno, v.idviaje, v.fecha_hora_ingreso
+            FROM viaje v
+            INNER JOIN tarjeta t ON t.idtarjeta = v.idtarjeta
+            INNER JOIN pasajero p ON p.ci = t.ci
+            WHERE t.ci = x_ci;
+            
+        p_nombre pasajero.nombre%TYPE;
+        p_paterno pasajero.paterno%TYPE;
+        p_materno pasajero.materno%TYPE;
+        v_id viaje.idviaje%TYPE;
+        v_hora_fecha viaje.fecha_hora_ingreso%TYPE;
+    BEGIN
+        OPEN c1;
+        LOOP
+            FETCH c1 INTO p_nombre, p_paterno, p_materno, v_id, v_hora_fecha;
+            EXIT WHEN c1%NOTFOUND;
+            
+            INSERT INTO TABLA_AUXILIAR (dato_importante, usuario_consulta, fecha_consulta)
+            VALUES ('Respaldo Viaje: ' || v_id || ' - ' || p_nombre || ' ' || p_paterno, USER, SYSDATE);
+        END LOOP;
+        CLOSE c1;
+        COMMIT; 
+    END;
+
+
+    PROCEDURE sp_mostrar_lineas_molinetes AS
+        CURSOR c1 IS 
+            SELECT idlinea, color
+            FROM linea;
+            
+        CURSOR c2(p_id_linea NUMBER) IS 
+            SELECT e.nombre, m.estado_operativo
+            FROM estacion e
+            INNER JOIN molinete m ON m.idestacion = e.idestacion
+            WHERE e.idlinea = p_id_linea;
+            
+        l_id linea.idlinea%TYPE;
+        l_color linea.color%TYPE;
+        e_nombre estacion.nombre%TYPE;
+        m_estado molinete.estado_operativo%TYPE;
+    BEGIN
+        OPEN c1;
+        LOOP
+            FETCH c1 INTO l_id, l_color;
+            EXIT WHEN c1%NOTFOUND;
+            DBMS_OUTPUT.PUT_LINE('LINEA: ' || l_color);
+            
+            OPEN c2(l_id);
+            LOOP
+                FETCH c2 INTO e_nombre, m_estado;
+                EXIT WHEN c2%NOTFOUND;
+                DBMS_OUTPUT.PUT_LINE('   ESTACION: ' || e_nombre || ' | ESTADO MOLINETES: ' || m_estado);
+            END LOOP;
+            CLOSE c2;
+        END LOOP;
+        CLOSE c1;
+    END;
+
+END pkg_operaciones_teleferico;
+
+--VISTA 3 CU04 HISTORIAL DE UN PASAJERO--
+CREATE OR REPLACE VIEW VW_HISTORIAL_PASAJERO AS
+SELECT
+    p.CI,
+    p.NOMBRE || ' ' || p.PATERNO AS PASAJERO,
+    ct.NOMBRE_PERFIL AS CATEGORIA,
+    t.IDTARJETA,
+    t.SALDO,
+    v.IDVIAJE,
+    v.MONTO_COBRADO,
+    v.ESTRANSBORDO,
+    v.FECHA_HORA_INGRESO,
+    e.NOMBRE AS ESTACION,
+    l.COLOR AS LINEA
+FROM VIAJE v
+INNER JOIN TARJETA t ON t.IDTARJETA = v.IDTARJETA
+INNER JOIN PASAJERO p ON p.CI = t.CI
+INNER JOIN CATEGORIA_TARJETA ct ON ct.IDCATEGORIA = t.IDCATEGORIA
+INNER JOIN MOLINETE m ON m.IDMOLINETE = v.IDMOLINETE
+INNER JOIN ESTACION e ON e.IDESTACION = m.IDESTACION
+INNER JOIN LINEA l ON l.IDLINEA = e.IDLINEA;
+
+
+
+
+----------------------------------------------------------------------------------------
+
+
+--TRIGGER 3 CU05 APLICACION DE RESTRICCIONES DE INTEGRIDAD EVITAR ELIMINAR MOLINETES EN ESTADO ACTIVO
+CREATE OR REPLACE TRIGGER trg_restriccion_molinetes
+BEFORE DELETE ON molinete
+FOR EACH ROW 
+BEGIN 
+	IF :OLD.estado_operativo = 'ACTIVO' THEN
+		RAISE_APPLICATION_ERROR(-20001, 'NO SE PUEDEN ELIMINAR MOLINETES EN ESTADO ACTIVO');
+	END IF;
+END;
+
+
+--VISTA 1 CU05 RECAUDACION POR LINEA--
+CREATE OR REPLACE VIEW VW_RECAUDACION_POR_LINEA AS
+SELECT 
+    l.COLOR AS LINEA,
+    COUNT(v.IDVIAJE) AS CANTIDAD_VIAJES,
+    SUM(v.MONTO_COBRADO) AS RECAUDACION_TOTAL_BS
+FROM VIAJE v
+INNER JOIN MOLINETE m ON m.IDMOLINETE = v.IDMOLINETE
+INNER JOIN ESTACION e ON e.IDESTACION = m.IDESTACION
+INNER JOIN LINEA l ON l.IDLINEA = e.IDLINEA
+GROUP BY l.COLOR;
+
+--PROCEDIMIENTO 7 CU05 MOSTRAR LAS LINEAS, ESTACIONES Y EL ESTADO OPERATIVO DE SUS MOLINETES --
+CREATE OR REPLACE PROCEDURE sp_mostrar_lineas_molinetes
+AS
+	CURSOR c1 IS 
+		SELECT idlinea,color
+		FROM linea;
+	CURSOR c2(p_id_linea NUMBER )IS 
+		SELECT e.nombre, m.estado_operativo
+		FROM estacion e
+		INNER JOIN molinete m ON m.idestacion = e.idestacion
+		WHERE e.idlinea=p_id_linea;
+	l_id linea.idlinea%TYPE;
+	l_color linea.color%TYPE;
+	e_nombre estacion.nombre%TYPE;
+	m_estado molinete.estado_operativo%TYPE;
+BEGIN
+	OPEN c1;
+	LOOP
+		FETCH c1 INTO l_id, l_color;
+		EXIT WHEN c1%NOTFOUND;
+		DBMS_OUTPUT.PUT_LINE('LINEA: '|| l_color);
+		OPEN c2(l_id);
+		LOOP
+			FETCH c2 INTO e_nombre, m_estado;
+			EXIT WHEN c2%NOTFOUND;
+			DBMS_OUTPUT.PUT_LINE('ESTACION: '|| e_nombre || ' ' || 'ESTADO MOLINETES: ' || m_estado);
+		END LOOP;
+		CLOSE c2;
+	END LOOP;
+	CLOSE c1;
+END;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+ALTER SESSION SET "_ORACLE_SCRIPT" = true;
+-- Usuario: Administrador
+CREATE USER admin_gabriel 
+IDENTIFIED BY "User2024#admin_gabriel"
+DEFAULT TABLESPACE USERS
+TEMPORARY TABLESPACE TEMP;
+ALTER USER admin_gabriel QUOTA 100M ON USERS;
+
+-- Usuario: Auditor
+CREATE USER auditor_marcos
+IDENTIFIED BY "User2024#auditor_marcos"
+DEFAULT TABLESPACE USERS
+TEMPORARY TABLESPACE TEMP;
+ALTER USER auditor_marcos QUOTA 100M ON USERS;
+
+-- Usuarios: Cajeros
+CREATE USER cajero_lucia
+IDENTIFIED BY "User2024#cajero_lucia"
+DEFAULT TABLESPACE USERS
+TEMPORARY TABLESPACE TEMP;
+ALTER USER cajero_lucia QUOTA 100M ON USERS;
+
+CREATE USER cajero_pedro
+IDENTIFIED BY "User2024#cajero_pedro"
+DEFAULT TABLESPACE USERS
+TEMPORARY TABLESPACE TEMP;
+ALTER USER cajero_pedro QUOTA 100M ON USERS;
+
+
+
+CREATE ROLE rol_admin_teleferico;
+CREATE ROLE rol_auditor_teleferico;
+CREATE ROLE rol_cajero_teleferico;
+
+
+GRANT CREATE SESSION, ALTER SESSION, CREATE USER, ALTER USER, DROP USER,
+      CREATE TABLESPACE, ALTER TABLESPACE, DROP TABLESPACE, 
+      CREATE ANY TABLE, DROP ANY TABLE, SELECT ANY TABLE, ALTER ANY TABLE,
+      CREATE ROLE, CREATE PROFILE, ALTER PROFILE, DROP PROFILE,
+      AUDIT SYSTEM, AUDIT ANY TO rol_admin_teleferico;
+
+
+GRANT CREATE SESSION, AUDIT ANY, SELECT ANY TABLE TO rol_auditor_teleferico;
+
+
+GRANT CREATE SESSION TO rol_cajero_teleferico;
+
+
+GRANT SELECT, INSERT, UPDATE ON TARJETA TO rol_cajero_teleferico;
+GRANT SELECT, INSERT, UPDATE ON RECARGA TO rol_cajero_teleferico;
+GRANT SELECT, INSERT ON TICKET TO rol_cajero_teleferico;
+GRANT SELECT ON LINEA TO rol_cajero_teleferico;
+GRANT SELECT ON ESTACION TO rol_cajero_teleferico;
+
+
+GRANT SELECT ON VIAJE TO rol_auditor_teleferico;
+GRANT SELECT ON VW_RECAUDACION_DIARIA_MOLINETE TO rol_auditor_teleferico;
+GRANT SELECT ON AUDITORIA TO rol_auditor_teleferico;
+
+
+
+CREATE PROFILE perfil_admin LIMIT
+    FAILED_LOGIN_ATTEMPTS 5
+    IDLE_TIME 60
+    CONNECT_TIME 720; 
+
+
+CREATE PROFILE perfil_operativo LIMIT
+    FAILED_LOGIN_ATTEMPTS 3
+    IDLE_TIME 30
+    CONNECT_TIME 480; 
+
+
+
+GRANT rol_admin_teleferico TO admin_gabriel;
+GRANT rol_auditor_teleferico TO auditor_marcos;
+GRANT rol_cajero_teleferico TO cajero_lucia;
+GRANT rol_cajero_teleferico TO cajero_pedro;
+
+-- Asignar Perfiles a los Usuarios
+ALTER USER admin_gabriel PROFILE perfil_admin;
+ALTER USER auditor_marcos PROFILE perfil_operativo;
+ALTER USER cajero_lucia PROFILE perfil_operativo;
+ALTER USER cajero_pedro PROFILE perfil_operativo;
+
+
+
+SELECT username, profile, account_status 
+FROM dba_users 
+WHERE username IN ('ADMIN_GABRIEL', 'AUDITOR_MARCOS', 'CAJERO_LUCIA', 'CAJERO_PEDRO');
+
+
+SELECT grantee, granted_role 
+FROM dba_role_privs 
+WHERE grantee IN ('ADMIN_GABRIEL', 'AUDITOR_MARCOS', 'CAJERO_LUCIA', 'CAJERO_PEDRO');
+
+
+SELECT privilege 
+FROM role_sys_privs 
+WHERE role = 'ROL_ADMIN_TELEFERICO';
+
+GRANT SELECT_CATALOG_ROLE TO TELEFERICO;
+
+
+
+
