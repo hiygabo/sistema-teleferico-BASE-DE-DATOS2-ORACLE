@@ -7,11 +7,11 @@
 ---
  
 ## Integrantes
- 
-| Nombre completo | 
-|---|---|
-| Gabriel Omar Andia Alave | 
-| Marcos Daniel Fernandez Cazas | 
+
+| Nombre completo |
+|---|
+| Gabriel Omar Andia Alave |
+| Marcos Daniel Fernandez Cazas |
  
 ---
  
